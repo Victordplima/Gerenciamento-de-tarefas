@@ -3,7 +3,7 @@
 ⚠️ Ainda não está totalmente completo ⚠️ </br>
 
 <h3>🖥️ Como acessar/utilizar:</h3>
-<p>* Você pode acessar pelo <a href="https://replit.com/@VictorLima31/Gerenciador-de-Tarefas?v=1">Replit</a></p><br/>
+<p>* Você pode acessar pelo <a href="https://replit.com/@VictorLima31/Gerenciador-de-Tarefas?v=1">Replit</a></p>
 <p>* Você também pode fazer o download do código e executá-lo em sua IDE de preferência (Testado no JGrasp)</p></br>
 
 <h3>✨ O que o código faz:</h3>
