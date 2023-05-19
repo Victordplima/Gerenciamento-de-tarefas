@@ -19,13 +19,13 @@ public class GerenciadorTarefas {
   private final String PENDENTES_FILE = "tarefasPendentes.txt";
   private final String CONCLUIDAS_FILE = "tarefasConcluidas.txt";
   private ArrayList<Tarefa> listaTarefas = new ArrayList<Tarefa>();
-  private String nomeUsuario;
+  public String nomeUsuario;
 
   public GerenciadorTarefas(String nomeUsuario) {
     this.tarefasPendentes = new ArrayList<>();
     this.tarefasConcluidas = new ArrayList<>();
     this.nomeUsuario = nomeUsuario;
-  }
+    }
 
   public void adicionarTarefa(Tarefa t) {
     String caminhoArquivo = "Usuarios/" + nomeUsuario + "/tarefasPendentes.txt";

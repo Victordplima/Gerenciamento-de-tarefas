@@ -8,17 +8,17 @@ import java.util.Scanner;
 
 public class GerenciadorUsuarios {
     private static final String USUARIOS_PATH = "Usuarios/";
-    public String nomeUsuario;
+    private String nomeUsuario;
 
-    //public String getNomeUsuario() {
-    //    return nomeUsuario;
-    //}
+    public String getNomeUsuario() {
+        return nomeUsuario;
+    }
 
     public boolean realizarLogin() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Digite o nome de usuário: ");
-        String nomeUsuario = scanner.nextLine();
+        nomeUsuario = scanner.nextLine();
 
         if (!existeUsuario(nomeUsuario)) {
             System.out.println("Usuário não encontrado. Criando novo usuário...");

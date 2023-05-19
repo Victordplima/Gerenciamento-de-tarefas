@@ -8,7 +8,7 @@ public class Main {
     String origem = "tarefasPendentes.txt";
     String destino = "tarefasConcluidas.txt";
     ArrayList<Tarefa> listaTarefas = new ArrayList<Tarefa>();
-    GerenciadorTarefas gerenciador = new GerenciadorTarefas();
+    //GerenciadorTarefas gerenciador = new GerenciadorTarefas();
     Scanner scanner = new Scanner(System.in);
     LocalDate dataCriacao;
 
@@ -20,7 +20,8 @@ public class Main {
     boolean loginSucesso = gerenciadorUsuarios.realizarLogin();
 
     if (loginSucesso) {
-      String nomeUsuario = gerenciadorUsuarios.getNomeUsuario(); // Obtém o nome do usuário
+      String nomeUsuario = gerenciadorUsuarios.getNomeUsuario(); // Obtem o nome do usuário
+      System.out.println(nomeUsuario);
       gerenciadorTarefas = new GerenciadorTarefas(nomeUsuario); // Cria o objeto GerenciadorTarefas com o nome do usuário
 
       while (true) {
@@ -42,6 +43,7 @@ public class Main {
             String titulo = scanner.nextLine();
             System.out.println("Digite a descricao da nova tarefa:");
             String descricao = scanner.nextLine();
+            System.out.println(gerenciadorTarefas.nomeUsuario);
             gerenciadorTarefas.criarTarefa(titulo, descricao);
             break;
 
