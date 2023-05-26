@@ -45,9 +45,7 @@ public class GerenciadorUsuarios {
         }
 
         boolean loginSucesso = true;
-
-        // scanner.close();
-
+        //scanner.close();
         return loginSucesso;
     }
 

@@ -1,29 +1,20 @@
 import java.util.Scanner;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.io.IOException;
 
 public class Main {
   public static void main(String[] args) {
-    String origem = "tarefasPendentes.txt";
-    String destino = "tarefasConcluidas.txt";
-    ArrayList<Tarefa> listaTarefas = new ArrayList<Tarefa>();
-    //GerenciadorTarefas gerenciador = new GerenciadorTarefas();
-    Scanner scanner = new Scanner(System.in);
-    LocalDate dataCriacao;
 
     // Realizar Login
     GerenciadorUsuarios gerenciadorUsuarios = new GerenciadorUsuarios();
-    GerenciadorTarefas gerenciadorTarefas;
+    GerenciadorTarefas gerenciadorTarefas = new GerenciadorTarefas();
     gerenciadorUsuarios.criarPastaUsuarios();
-
     boolean loginSucesso = gerenciadorUsuarios.realizarLogin();
 
     if (loginSucesso) {
+      Scanner scanner = new Scanner(System.in);
       String nomeUsuario = gerenciadorUsuarios.getNomeUsuario(); // Obtem o nome do usuário
-      System.out.println(nomeUsuario);
-      gerenciadorTarefas = new GerenciadorTarefas(nomeUsuario); // Cria o objeto GerenciadorTarefas com o nome do usuário
-
+      System.out.println("Bem-vindo " + nomeUsuario + "!");
+      // gerenciadorTarefas = new GerenciadorTarefas(nomeUsuario, categoria); // Cria o objeto GerenciadorTarefas com o nome do usuário
       while (true) {
         System.out.println("==========Sistema de Gerenciamento de Tarefas==========");
         System.out.println("Escolha uma opcao:");
@@ -41,10 +32,16 @@ public class Main {
           case 1:
             System.out.println("Digite o titulo da nova tarefa:");
             String titulo = scanner.nextLine();
+            System.out.println("Digite a categoria da nova tarefa:");
+            String categoria = scanner.nextLine();
             System.out.println("Digite a descricao da nova tarefa:");
             String descricao = scanner.nextLine();
+            gerenciadorTarefas.setNomeUsuario(nomeUsuario);
+            gerenciadorTarefas.setCategoria(categoria);
+            //categoria = gerenciadorTarefas.getCategoria();
             System.out.println(gerenciadorTarefas.nomeUsuario);
-            gerenciadorTarefas.criarTarefa(titulo, descricao);
+            System.out.println(gerenciadorTarefas.categoria);
+            gerenciadorTarefas.criarTarefa(titulo, descricao, categoria);
             break;
 
           case 2:
@@ -87,7 +84,7 @@ public class Main {
       }
     } else {
       System.out.println("Falha no login. Encerrando o programa.");
-      scanner.close();
+      // scanner.close();
       System.exit(0);
     }
   }

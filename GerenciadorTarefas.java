@@ -1,36 +1,47 @@
 import java.util.Scanner;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class GerenciadorTarefas {
-  private List<Tarefa> tarefasPendentes;
-  private List<Tarefa> tarefasConcluidas;
-  private final String PENDENTES_FILE = "tarefasPendentes.txt";
-  private final String CONCLUIDAS_FILE = "tarefasConcluidas.txt";
-  private ArrayList<Tarefa> listaTarefas = new ArrayList<Tarefa>();
   public String nomeUsuario;
+  public String categoria;
 
-  public GerenciadorTarefas(String nomeUsuario) {
-    this.tarefasPendentes = new ArrayList<>();
-    this.tarefasConcluidas = new ArrayList<>();
+  public GerenciadorTarefas() {
+    // this.nomeUsuario = nomeUsuario;
+    // this.categoria = categoria;
+  }
+
+  public void setNomeUsuario(String nomeUsuario) {
     this.nomeUsuario = nomeUsuario;
-    }
+  }
+
+  public void setCategoria(String categoria) {
+    this.categoria = categoria;
+  }
+
+  public String getCategoria() {
+    return categoria;
+  }
 
   public void adicionarTarefa(Tarefa t) {
-    String caminhoArquivo = "Usuarios/" + nomeUsuario + "/tarefasPendentes.txt";
+    // Diretório em que será salva a tarefa:
+    String caminhoDiretorio = "Usuarios/" + nomeUsuario + "/" + categoria;
+    String caminhoArquivo = caminhoDiretorio + "/tarefasPendentes.txt";
 
     try {
+      // Criar o diretório da categoria, se não existir
+      Files.createDirectories(Paths.get(caminhoDiretorio));
+
       FileWriter fw = new FileWriter(caminhoArquivo, true);
       BufferedWriter bw = new BufferedWriter(fw);
       bw.write(t.toString());
@@ -40,15 +51,24 @@ public class GerenciadorTarefas {
     } catch (IOException e) {
       System.out.println("Erro ao salvar tarefa no arquivo de texto.");
     }
-
-    tarefasPendentes.add(t);
   }
 
-  public void criarTarefa(String titulo, String descricao) {
+  public void criarTarefa(String titulo, String descricao, String categoria) {
     LocalDate dataCriacao = LocalDate.now();
-    Tarefa novaTarefa = new Tarefa(titulo, descricao, dataCriacao, false);
+    Tarefa novaTarefa = new Tarefa(titulo, descricao, dataCriacao, false, categoria);
     adicionarTarefa(novaTarefa);
-    System.out.println("Tarefa adicionada com sucesso.");
+
+    // Criar diretório da categoria, se não existir
+    String caminhoUsuario = "Usuarios/" + nomeUsuario;
+    String caminhoCategoria = caminhoUsuario + "/" + categoria;
+    Path diretorioCategoria = Paths.get(caminhoCategoria);
+
+    try {
+      Files.createDirectories(diretorioCategoria);
+      System.out.println("Diretório da categoria criado com sucesso.");
+    } catch (IOException e) {
+      System.out.println("Erro ao criar o diretório da categoria: " + e.getMessage());
+    }
   }
 
   public boolean concluirTarefa(String tituloProcurado) throws IOException {
