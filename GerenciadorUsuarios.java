@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
@@ -9,13 +11,14 @@ import java.util.Scanner;
 public class GerenciadorUsuarios {
     private static final String USUARIOS_PATH = "Usuarios/";
     private String nomeUsuario;
+    private Scanner scanner;
 
     public String getNomeUsuario() {
         return nomeUsuario;
     }
 
-    public boolean realizarLogin() {
-        Scanner scanner = new Scanner(System.in);
+    public boolean realizarLogin(Scanner scanner) {
+        this.scanner = scanner;
 
         System.out.print("Digite o nome de usuário: ");
         nomeUsuario = scanner.nextLine();
@@ -44,19 +47,16 @@ public class GerenciadorUsuarios {
             System.out.println("Login bem-sucedido!");
         }
 
-        boolean loginSucesso = true;
-        //scanner.close();
-        return loginSucesso;
+        return true;
     }
 
     public void criarPastaUsuarios() {
         File usuariosDir = new File(USUARIOS_PATH);
         if (!usuariosDir.exists()) {
-            if (usuariosDir.mkdir()) {
+            if (usuariosDir.mkdirs()) {
                 System.out.println("Pasta 'Usuarios/' criada com sucesso.");
             } else {
                 System.out.println("Falha ao criar a pasta 'Usuarios/'.");
-                System.exit(0);
             }
         }
     }
@@ -75,7 +75,7 @@ public class GerenciadorUsuarios {
     private void salvarSenha(String nomeUsuario, String senha) {
         String usuarioPath = USUARIOS_PATH + nomeUsuario + "/senha.txt";
 
-        try (FileWriter writer = new FileWriter(usuarioPath)) {
+        try (FileWriter writer = new FileWriter(usuarioPath, StandardCharsets.UTF_8)) {
             writer.write(senha);
         } catch (IOException e) {
             System.out.println("Erro ao salvar a senha.");
@@ -88,8 +88,10 @@ public class GerenciadorUsuarios {
         Path path = Paths.get(usuarioPath);
 
         try {
-            String senhaSalva = new String(Files.readAllBytes(path));
+            String senhaSalva = Files.readString(path);
             return senha.equals(senhaSalva);
+        } catch (NoSuchFileException e) {
+            System.out.println("Arquivo de senha não encontrado.");
         } catch (IOException e) {
             System.out.println("Erro ao verificar a senha.");
             e.printStackTrace();

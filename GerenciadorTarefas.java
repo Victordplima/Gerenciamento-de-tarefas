@@ -17,8 +17,6 @@ public class GerenciadorTarefas {
   public String categoria;
 
   public GerenciadorTarefas() {
-    // this.nomeUsuario = nomeUsuario;
-    // this.categoria = categoria;
   }
 
   public void setNomeUsuario(String nomeUsuario) {
@@ -71,94 +69,157 @@ public class GerenciadorTarefas {
     }
   }
 
-  public boolean concluirTarefa(String tituloProcurado) throws IOException {
+  public boolean concluirTarefa(String tituloProcurado) {
     String caminhoUsuario = "Usuarios/" + nomeUsuario;
-    String caminhoPendentes = caminhoUsuario + "/tarefasPendentes.txt";
-    String caminhoConcluidas = caminhoUsuario + "/tarefasConcluidas.txt";
+    File diretorioUsuario = new File(caminhoUsuario);
 
-    boolean tarefaEncontrada = false;
-    boolean tarefaConcluida = false;
-
-    try (Scanner scanner = new Scanner(new FileReader(caminhoPendentes));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoConcluidas, true))) {
-
-      while (scanner.hasNextLine()) {
-        String linha = scanner.nextLine();
-
-        if (linha.contains(tituloProcurado)) {
-          tarefaEncontrada = true;
-
-          // Marcar a tarefa como concluída.
-          linha = linha.replace("pendente", "concluida");
-          tarefaConcluida = true;
-        }
-
-        writer.write(linha + "\n");
-      }
-    }
-
-    if (tarefaEncontrada && tarefaConcluida) {
-      // Remover a tarefa concluída do arquivo de tarefas pendentes.
-      removerLinha(caminhoPendentes, tituloProcurado);
-      return true;
-    } else {
+    // Verificar se o diretório do usuário existe
+    if (!diretorioUsuario.exists() || !diretorioUsuario.isDirectory()) {
+      System.out.println("Diretório do usuário não encontrado.");
       return false;
     }
+
+    // Listar todas as categorias dentro do diretório do usuário
+    File[] categorias = diretorioUsuario.listFiles();
+
+    // Iterar sobre as categorias
+    for (File categoria : categorias) {
+      if (categoria.isDirectory()) {
+        String caminhoPendentes = categoria.getPath() + "/tarefasPendentes.txt";
+        String caminhoConcluidas = categoria.getPath() + "/tarefasConcluidas.txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(caminhoPendentes));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoConcluidas, true))) {
+
+          boolean tarefaEncontrada = false;
+          boolean tarefaConcluida = false;
+
+          String linha;
+          while ((linha = reader.readLine()) != null) {
+            if (linha.contains(tituloProcurado)) {
+              tarefaEncontrada = true;
+              linha = linha.replace("pendente", "concluída");
+              tarefaConcluida = true;
+            }
+
+            writer.write(linha);
+            writer.newLine();
+          }
+
+          if (tarefaEncontrada && tarefaConcluida) {
+            removerLinha(caminhoPendentes, tituloProcurado);
+            return true;
+          }
+
+        } catch (IOException e) {
+          System.out.println("Erro ao concluir a tarefa: " + e.getMessage());
+          return false;
+        }
+      }
+    }
+    return false;
   }
 
   public void removerLinha(String caminhoArquivo, String linhaRemover) throws IOException {
     File arquivoTemporario = new File(caminhoArquivo + ".temp");
     BufferedReader reader = new BufferedReader(new FileReader(caminhoArquivo));
     BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoTemporario));
+
     try {
       String linha;
       while ((linha = reader.readLine()) != null) {
-        // Verificar se a linha contém o que estamos procurando.
         if (!linha.startsWith(linhaRemover)) {
-          // A linha não é a linha que deve ser removida, copiá-la para o arquivo
-          // temporário.
-          if (linha != null) {
-            writer.write(linha);
-            writer.newLine();
-          }
+          writer.write(linha);
+          writer.newLine();
         }
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Erro ao remover a linha: " + e.getMessage());
     } finally {
-      reader.close();
-      writer.close();
+      try {
+        if (reader != null) {
+          reader.close();
+        }
+      } catch (IOException e) {
+        System.out.println("Erro ao fechar o leitor de arquivo: " + e.getMessage());
+      }
+
+      try {
+        if (writer != null) {
+          writer.close();
+        }
+      } catch (IOException e) {
+        System.out.println("Erro ao fechar o escritor de arquivo: " + e.getMessage());
+      }
     }
+
     Files.move(arquivoTemporario.toPath(), new File(caminhoArquivo).toPath(), StandardCopyOption.REPLACE_EXISTING);
   }
 
   public void exibirTarefasPendentes() {
-    String caminhoArquivo = "Usuarios/" + nomeUsuario + "/tarefasPendentes.txt";
-    try {
-      File arquivo = new File(caminhoArquivo);
-      Scanner scanner = new Scanner(arquivo);
-      while (scanner.hasNextLine()) {
-        String linha = scanner.nextLine();
-        System.out.println(linha);
+    String caminhoUsuario = "Usuarios/" + nomeUsuario;
+    File diretorioUsuario = new File(caminhoUsuario);
+
+    // Verificar se o diretório do usuário existe
+    if (!diretorioUsuario.exists() || !diretorioUsuario.isDirectory()) {
+      System.out.println("Diretório do usuário não encontrado.");
+      return;
+    }
+
+    // Listar todas as categorias dentro do diretório do usuário
+    File[] categorias = diretorioUsuario.listFiles();
+
+    // Iterar sobre as categorias
+    for (File categoria : categorias) {
+      if (categoria.isDirectory()) {
+        File diretorioCategoria = new File(categoria.getPath());
+        File[] tarefasPendentes = diretorioCategoria.listFiles((dir, nome) -> nome.equals("tarefasPendentes.txt"));
+
+        if (tarefasPendentes != null && tarefasPendentes.length > 0) {
+          try (BufferedReader reader = new BufferedReader(new FileReader(tarefasPendentes[0]))) {
+            String linha;
+            while ((linha = reader.readLine()) != null) {
+              System.out.println(linha);
+            }
+          } catch (FileNotFoundException e) {
+            System.out.println("Arquivo de tarefas pendentes não encontrado para a categoria " + categoria.getName());
+          } catch (IOException e) {
+            System.out.println("Erro ao ler o arquivo de tarefas pendentes: " + e.getMessage());
+          }
+        } else {
+          System.out.println("Arquivo de tarefas pendentes não encontrado para a categoria " + categoria.getName());
+        }
       }
-      scanner.close();
-    } catch (FileNotFoundException e) {
-      System.out.println("Arquivo não encontrado.");
     }
   }
 
   public void exibirTarefasConcluidas() {
-    String caminhoArquivo = "Usuarios/" + nomeUsuario + "/tarefasConcluidas.txt";
-    try {
-      File arquivo = new File(caminhoArquivo);
-      Scanner scanner = new Scanner(arquivo);
-      while (scanner.hasNextLine()) {
-        String linha = scanner.nextLine();
-        System.out.println(linha);
+    String caminhoUsuario = "Usuarios/" + nomeUsuario;
+    File diretorioUsuario = new File(caminhoUsuario);
+
+    if (!diretorioUsuario.exists() || !diretorioUsuario.isDirectory()) {
+      System.out.println("Diretório do usuário não encontrado.");
+      return;
+    }
+
+    File[] categorias = diretorioUsuario.listFiles();
+
+    for (File categoria : categorias) {
+      if (categoria.isDirectory()) {
+        String caminhoArquivo = categoria.getPath() + "/tarefasConcluidas.txt";
+        try {
+          File arquivo = new File(caminhoArquivo);
+          Scanner scanner = new Scanner(arquivo);
+          System.out.println("Categoria: " + categoria.getName());
+          while (scanner.hasNextLine()) {
+            String linha = scanner.nextLine();
+            System.out.println(linha);
+          }
+          scanner.close();
+        } catch (FileNotFoundException e) {
+          System.out.println("Arquivo de tarefas concluídas não encontrado para a categoria " + categoria.getName());
+        }
       }
-      scanner.close();
-    } catch (FileNotFoundException e) {
-      System.out.println("Arquivo não encontrado.");
     }
   }
 }
