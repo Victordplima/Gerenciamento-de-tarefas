@@ -70,62 +70,51 @@ public class GerenciadorTarefas {
   }
 
   public boolean concluirTarefa(String tituloProcurado) {
-    String caminhoUsuario = "Usuarios/" + nomeUsuario;
-    File diretorioUsuario = new File(caminhoUsuario);
-
-    // Verificar se o diretório do usuário existe
-    if (!diretorioUsuario.exists() || !diretorioUsuario.isDirectory()) {
-      System.out.println("Diretório do usuário não encontrado.");
+    String caminhoDiretorio = "Usuarios/" + nomeUsuario + "/" + categoria;
+    String caminhoPendentes = caminhoDiretorio + "/tarefasPendentes.txt";
+    String caminhoConcluidas = caminhoDiretorio + "/tarefasConcluidas.txt";
+    boolean tarefaEncontrada = false;
+    boolean tarefaConcluida = false;
+    try (Scanner scanner = new Scanner(new FileReader(caminhoPendentes));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoConcluidas, true))) {
+      while (scanner.hasNextLine()) {
+        String linha = scanner.nextLine();
+        if (linha.contains(tituloProcurado)) {
+          tarefaEncontrada = true;
+          // Marcar a tarefa como concluída.
+          linha = linha.replace("Pendente", "Concluida");
+          tarefaConcluida = true;
+        }
+        writer.write(linha + "\n");
+      }
+    } catch (IOException e) {
+      // Tratamento da exceção
+      System.out.println("Erro ao concluir a tarefa: " + e.getMessage());
       return false;
     }
-
-    // Listar todas as categorias dentro do diretório do usuário
-    File[] categorias = diretorioUsuario.listFiles();
-
-    // Iterar sobre as categorias
-    for (File categoria : categorias) {
-      if (categoria.isDirectory()) {
-        String caminhoPendentes = categoria.getPath() + "/tarefasPendentes.txt";
-        String caminhoConcluidas = categoria.getPath() + "/tarefasConcluidas.txt";
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(caminhoPendentes));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(caminhoConcluidas, true))) {
-
-          boolean tarefaEncontrada = false;
-          boolean tarefaConcluida = false;
-
-          String linha;
-          while ((linha = reader.readLine()) != null) {
-            if (linha.contains(tituloProcurado)) {
-              tarefaEncontrada = true;
-              linha = linha.replace("pendente", "concluída");
-              tarefaConcluida = true;
-            }
-
-            writer.write(linha);
-            writer.newLine();
-          }
-
-          if (tarefaEncontrada && tarefaConcluida) {
-            removerLinha(caminhoPendentes, tituloProcurado);
-            return true;
-          }
-
-        } catch (IOException e) {
-          System.out.println("Erro ao concluir a tarefa: " + e.getMessage());
-          return false;
-        }
+    if (tarefaEncontrada && tarefaConcluida) {
+      // Remover a tarefa concluída do arquivo de tarefas pendentes.
+      try {
+        removerLinha(caminhoPendentes, tituloProcurado);
+      } catch (IOException e) {
+        // Tratamento da exceção
+        System.out.println("Erro ao remover a linha: " + e.getMessage());
+        return false;
       }
+      return true;
+    } else {
+      return false;
     }
-    return false;
   }
 
   public void removerLinha(String caminhoArquivo, String linhaRemover) throws IOException {
     File arquivoTemporario = new File(caminhoArquivo + ".temp");
-    BufferedReader reader = new BufferedReader(new FileReader(caminhoArquivo));
-    BufferedWriter writer = new BufferedWriter(new FileWriter(arquivoTemporario));
-
+    BufferedReader reader = null;
+    BufferedWriter writer = null;
     try {
+      reader = new BufferedReader(new FileReader(caminhoArquivo));
+      writer = new BufferedWriter(new FileWriter(arquivoTemporario));
+
       String linha;
       while ((linha = reader.readLine()) != null) {
         if (!linha.startsWith(linhaRemover)) {
@@ -133,23 +122,12 @@ public class GerenciadorTarefas {
           writer.newLine();
         }
       }
-    } catch (IOException e) {
-      System.out.println("Erro ao remover a linha: " + e.getMessage());
     } finally {
-      try {
-        if (reader != null) {
-          reader.close();
-        }
-      } catch (IOException e) {
-        System.out.println("Erro ao fechar o leitor de arquivo: " + e.getMessage());
+      if (reader != null) {
+        reader.close();
       }
-
-      try {
-        if (writer != null) {
-          writer.close();
-        }
-      } catch (IOException e) {
-        System.out.println("Erro ao fechar o escritor de arquivo: " + e.getMessage());
+      if (writer != null) {
+        writer.close();
       }
     }
 
