@@ -21,4 +21,4 @@
 
 <h3>Grupo de Desenvolvimento:</h3>
 <p><a href=https://github.com/Victordplima>Victor Dala Paula de Lima</a></p>
-<p><a href=https://github.com/VitinDemarque>Victor Vieira Demarque</p>
+<p><a href=https://github.com/VitinDemarque>Victor Vieira Demarque.</p>
