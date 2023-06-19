@@ -1,23 +1,24 @@
-# Gerenciador de tarefas
-<h2>☕ Trabalho sobre Projeto orientado a objetos</h2>
-⚠️ Ainda não está totalmente completo ⚠️ </br>
+<h1>Gerenciador de Tarefas</h1>
 
-<h3>🖥️ Como acessar/utilizar:</h3>
-<p>* Você pode acessar pelo <a href="https://replit.com/@VictorLima31/Gerenciador-de-Tarefas?v=1">Replit</a></p>
-<p>* Você também pode fazer o download do código e executá-lo em sua IDE de preferência (Testado no JGrasp)</p></br>
+<h2>Trabalho sobre Projeto orientado a objetos - 3º Período ADS</h2>
 
-<h3>✨ O que o código faz:</h3>
-<h4>O código consiste em um gerenciador de tarefas, nele você pode:</h4></br>
-✅ Criar uma tarefa</br>
-✅ Concluir uma tarefa</br>
-✅ Exibir tarefas pendentes</br>
-✅ Exibir tarefas concluídas</br>
-<h4>Futuramente tera opções como:</h4>
-❌ Funcionalidade usuário com login e senha</br>
-❌ Funcionalidade categorias para as tarefas</br>
-❌ Funcionalidade de busca</br>
-❌ Funcionalidade de subtarefas</br>
+<h3>Como acessar/utilizar:</h3>
+<p>Você pode visualizar o código apertando .</a>.</p>
+<p>Você também pode fazer o download do código e executá-lo em sua IDE de preferência.</p>
 
-<h3>👨‍💻 Grupo:</h3>
-<p>Victor Dala Paula de Lima</p>
-<p>Victor Vieira Demarque</p>
+<h3>O que o código faz:</h3>
+<h4>O código consiste em um gerenciador de tarefas, nele você pode:</h4>
+<ul>
+  <li>Utilizar usuário com login e senha</li>
+  <li>Criar uma tarefa</li>
+  <li>Concluir uma tarefa</li>
+  <li>Exibir tarefas pendentes</li>
+  <li>Exibir tarefas concluídas</li>
+  <li>Adicionar categorias para as tarefas</li>
+  <li>Buscar tarefas por nome</li>
+  <li>Adicionar e exibir subtarefas</li>
+</ul>
+
+<h3>Grupo de Desenvolvimento:</h3>
+<p><a href=https://github.com/Victordplima>Victor Dala Paula de Lima</a></p>
+<p><a href=https://github.com/VitinDemarque>Victor Vieira Demarque</p>
